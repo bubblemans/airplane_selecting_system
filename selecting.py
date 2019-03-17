@@ -54,7 +54,6 @@ class Section():
 		for i in self.rows:
 			i.insert(seat)
 
-
 class Jet():
 	def __init__(self):
 		pass
@@ -131,7 +130,7 @@ class Airplane_view():
 		x = x + 30
 		y = y + 80
 
-		button = tk.Button(self.master, fg="blue")
+		button = tk.Button(self.master)
 		button.config(height=27, width=27, image=image, command = lambda: Clicked(self,flag,r,c,jet))
 		button.image = image
 		button.pack()
@@ -142,6 +141,14 @@ class Airplane_view():
 		label.config(height=h,width=w)
 		label.pack()
 		label.place(x=x,y=y)
+
+	def create_searchbar(self,jet):
+		entry = tk.Entry(self.master)
+		entry.place(x=500,y=400)
+
+		button = tk.Button(self.master, text="search")
+		button.config(command = lambda: search(jet, entry.get()))
+		button.place(x=720,y=400)
 
 	def insert_passenger(self,r,c,jet):
 		top = tk.Toplevel()
@@ -160,13 +167,39 @@ class Airplane_view():
 		send_button = tk.Button(top, text="send", command = lambda: send_info(top,lastname_entry.get(),firstname_entry.get(),r,c,jet))
 		send_button.grid(row=1, column=2)
 
-
-
 	def show(self):
 		self.master.mainloop()
 
 	def dismiss(self):
 		self.master.destroy()
+
+def search(jet, name):
+	for section in jet.sections:
+		for row in section.rows:
+			for seats in row.seats:
+				for key in seats:
+					# print(seats[key])
+					seat = seats[key]
+					if name == seat.passenger.lastname:
+						message(True,name)
+						return 
+					elif name == seat.passenger.firstname:
+						message(True,name)
+						return
+					elif name == seat.passenger.firstname + " "+ seat.passenger.lastname:
+						messageTrue,(name)
+						return
+	message(False,name)
+
+def message(flag, name):
+	top = tk.Toplevel()
+	if flag == True:
+		label = tk.Label(top, text=name+" is on the plane!", height=3, width=20)
+		label.pack()
+	else:
+		label = tk.Label(top, text=name+" is not on the plane.", height=3, width=20)
+		label.pack()
+
 
 def send_info(top,lastname,firstname,r,c,jet):
 	top.destroy()
@@ -235,6 +268,7 @@ def draw_seats(jet):
 			x = 760
 		airplane.create_label(1,20,x,10,class_list[i])
 	
+	airplane.create_searchbar(jet)
 	airplane.show()
 
 def main():
